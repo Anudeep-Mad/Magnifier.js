@@ -45,6 +45,7 @@
         <div class="btn-wrapper">
             <button class="prev" id="gallery-prev">&lt;</button>
             <button class="next" id="gallery-next">&gt;</button>
+            <button class="action" id="change">Change</button>
         </div>
     </div>
 
@@ -457,6 +458,7 @@ var evt = new Event(),
         images: imageData,
         prev: document.getElementById('gallery-prev'),
         next: document.getElementById('gallery-next'),
+        change: document.getElementById('change'),
         previewText: document.getElementById('gallery-preview-title')
     });
 

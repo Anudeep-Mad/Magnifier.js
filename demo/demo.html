@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="800px" height="639px" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML canvas tag.</canvas>
+
+<script>
+var canvas = document.getElementById("myCanvas"),
+    ctx= canvas.getContext("2d"),
+    img = new Image(),
+    w = canvas.width / 3;
+
+// Load image
+img.crossOrigin = "anonymous";
+img.src = 'https://cdn.jpegmini.com/user/images/slider_puffin_jpegmini_mobile.jpg';
+
+// When the image has loaded
+img.onload = function(){
+    // Draw it and get it's data
+    ctx.drawImage(img, 0, 0);
+    var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height),
+        data = imgData.data;
+
+    // Iterate over all the pixels
+    for (var i = 0; i < data.length; i += 4) {
+        // The current pixels' x position
+        var x = Math.floor(i / 4) % canvas.width;
+
+        //Set the pixels' r, g, b channels if x is within certain bounds.
+        if(x < w)
+            data[i] = 255;   // Red
+        else if(x >= w && x < w * 2)
+            data[i+1] = 255; // Green
+        else
+            data[i+2] = 255; // Blue
+    }
+
+    // Re-draw the image.
+    ctx.putImageData(imgData, 0, 0);
+}
+</script>
+
+</body>
+</html>
