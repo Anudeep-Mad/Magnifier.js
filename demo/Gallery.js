@@ -1,6 +1,10 @@
 var Gallery = function (evt, m, options) {
     "use strict";
-
+    var img = document.createElement('img'),
+    a = document.createElement('a'),
+    frag = document.createDocumentFragment(),
+    li = document.createElement('li'),
+    img1 = document.createElement("img");
     var len = options.images.length,
         cur = -1,
         curImg = null,
@@ -22,14 +26,44 @@ var Gallery = function (evt, m, options) {
             options.previewText.childNodes[0].nodeValue = options.images[cur].title;
         };
 
-    this.render = function () {
+        this.render = function () {
+            var i = 0;
+    
+            for (i; i < len; i += 1) {
+                li = li.cloneNode(false);
+                a = a.cloneNode(false);
+                img = img.cloneNode(false);
+    
+                a.href = options.images[i].url;
+                a.title = options.images[i].title;
+                img.src = options.images[i].thumb;
+                img.setAttribute('data-large-img-url', options.images[i].large);
+                img.className = 'img';
+                img.id = 'img-' + i;
+    
+                a.appendChild(img);
+                li.appendChild(a);
+                console.log(img.src);
+                frag.appendChild(li);
+            }
+    
+            options.gallery.appendChild(frag);
+    
+            walk(1);
+    
+            m.attach({
+                thumb: '.img',
+                zoomable: true
+            });
+        };
+    var render1 = function () {
         var i = 0,
             frag = document.createDocumentFragment(),
             li = document.createElement('li'),
-            a = document.createElement('a'),
-            canvas = document.createElement('canvas'),
-            img = document.createElement('img'),
-            img1 = document.createElement("img");
+            //a = document.createElement('a'),
+            canvas = document.createElement('canvas');
+            //img = document.createElement('img'),
+            //img1 = document.createElement("img");
 
         for (i; i < len; i += 1) {
             li = li.cloneNode(false);
@@ -37,10 +71,7 @@ var Gallery = function (evt, m, options) {
             canvas = canvas.cloneNode(false);
             img = img.cloneNode(false);
             img1 = img1.cloneNode(false);
-            console.log(img.src);
-            //img.src = this.changeColor(canvas,img).toDataURL();
-            console.log(img.src);
-            this.changeColor(canvas,img,img1,a,i).toDataURL();
+            changeColor(canvas,img,img1,a,i).toDataURL();
             a.href = options.images[i].url;
             a.title = options.images[i].title;
             img.src = options.images[i].thumb;
@@ -48,9 +79,6 @@ var Gallery = function (evt, m, options) {
             img.setAttribute('data-large-img-url', options.images[i].large);
             img.className = 'img';
             img.id = 'img-' + i;
-            
-            
-            
             a.appendChild(img1);
             li.appendChild(a);
 
@@ -67,14 +95,12 @@ var Gallery = function (evt, m, options) {
         });
     };
 
-    this.changeColor = function(canvas, img,img1,a,j){
+    var changeColor = function(canvas, img,img1,a,j){
         var ctx= canvas.getContext("2d");
-       
         img.crossOrigin = "anonymous";
         // When the image has loaded
         img.onload = function(){
             // Draw it and get it's data
-            console.log("Hello");
             canvas.width=img.width;
             canvas.height=img.height;
             var w = canvas.width / 3;
@@ -101,7 +127,9 @@ var Gallery = function (evt, m, options) {
 
             
             img1.src = canvas.toDataURL();
-            console.log(options.images[j]);
+            //console.log(img1);
+            //a.appendChild(img1);
+            //console.log(options.images[j]);
             img1.setAttribute('data-large-img-url', img1.src);
             img1.className = 'img1';
             img1.id = 'img1-' + j;
@@ -125,7 +153,22 @@ var Gallery = function (evt, m, options) {
         walk(-1);
     };
     this.change = function(){
-        console.log("In the change");
+        console.log(options.gallery);
+        options.gallery.removeChild(options.gallery.childNodes[0]);
+        console.log(options.gallery);
+        options.gallery.removeChild(options.gallery.childNodes[0]);
+        console.log(options.gallery);
+        options.gallery.removeChild(options.gallery.childNodes[0]);
+        console.log(options.gallery);
+        options.gallery.removeChild(options.gallery.childNodes[0]);
+        console.log(options.gallery);
+        options.gallery.removeChild(options.gallery.childNodes[0]);
+        console.log(options.gallery);
+        options.gallery.removeChild(options.gallery.childNodes[0]);
+        console.log(options.gallery);
+        options.gallery.removeChild(options.gallery.childNodes[0]);
+        console.log(options.gallery);
+        render1();
     }
 
     evt.attach('mousedown', options.prev, this.prev);
@@ -133,4 +176,5 @@ var Gallery = function (evt, m, options) {
     evt.attach('mousedown', options.change, this.change);
 
     this.render();
+    
 };
