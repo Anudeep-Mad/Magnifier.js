@@ -15,18 +15,31 @@ var canvas = document.getElementById("myCanvas"),
 img.crossOrigin = "anonymous";
 img.src = 'https://cdn.jpegmini.com/user/images/slider_puffin_jpegmini_mobile.jpg';
 
+var Filters={};
+
+Filters.brightness = function(pixels, adjustment) {
+  var d = pixels.data;
+  for (var i=0; i<d.length; i+=4) {
+    d[i] += adjustment;
+    d[i+1] += adjustment;
+    d[i+2] += adjustment;
+  }
+  return pixels;
+};
 // When the image has loaded
 img.onload = function(){
     // Draw it and get it's data
     ctx.drawImage(img, 0, 0);
     var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height),
-        data = imgData.data;
-
+    data = imgData.data;
+    console.log(data);
+    //data = Filters.brightness(imgData,1.5);
+    //console.log(data);
     // Iterate over all the pixels
     for (var i = 0; i < data.length; i += 4) {
         // The current pixels' x position
         var x = Math.floor(i / 4) % canvas.width;
-
+        console.log("In the loop")
         //Set the pixels' r, g, b channels if x is within certain bounds.
         if(x < w)
             data[i] = 255;   // Red

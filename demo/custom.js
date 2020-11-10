@@ -5,28 +5,11 @@ var Gallery = function (evt, m, options) {
     frag = document.createDocumentFragment(),
     li = document.createElement('li'),
     img1 = document.createElement("img"),
+    img2 = document.createElement("img"),
     canvas = document.createElement("canvas"),
     changed=false;
-    var len = options.images.length,
-        cur = -1,
-        curImg = null,
-        walk = function (dir) {
-            if (cur === -1 && dir === -1) {
-                cur = 0;
-            }
-
-            cur += dir;
-
-            if (cur === -1 || cur === len) {
-                cur -= len * dir;
-            }
-
-            curImg = options.gallery.childNodes[cur].childNodes[0].childNodes[0];
-            m.setThumb(curImg);
-            console.log("Current Image ",curImg);
-            options.gallery.parentNode.scrollTop = (curImg.offsetHeight) * cur;
-            options.previewText.childNodes[0].nodeValue = options.images[cur].title;
-        };
+    var len = options.images.length;
+        
     var render = function () {
         var i = 0;
         for (i; i < len; i += 1) {
@@ -40,7 +23,7 @@ var Gallery = function (evt, m, options) {
             img.setAttribute('data-large-img-url', options.images[i].large);
             img.className = 'img';
             img.id = 'img-' + i;
-
+            
             a.appendChild(img);
             li.appendChild(a);
             //console.log(img.src);
@@ -49,7 +32,7 @@ var Gallery = function (evt, m, options) {
 
         options.gallery.appendChild(frag);
 
-        walk(1);
+        //walk(1);
 
         m.attach({
             thumb: '.img',
@@ -59,17 +42,15 @@ var Gallery = function (evt, m, options) {
     var render1 = function () {
         var i = 0;
         for (i; i < len; i += 1) {
-
-
-            
             li = li.cloneNode(false);
             a = a.cloneNode(false);
             canvas = canvas.cloneNode(false);
-            img = img.cloneNode(false);
+            //img = img.cloneNode(false);
             img1 = img1.cloneNode(false);
             changeColor(canvas,img,img1,a,i);
             a.href = options.images[i].url;
             a.title = options.images[i].title;
+            
             a.appendChild(img1);
             li.appendChild(a);
 
@@ -78,14 +59,16 @@ var Gallery = function (evt, m, options) {
 
         options.gallery.appendChild(frag);
 
-        walk(1);
+        //walk(1);
     };
 
     var changeColor = function(canvas, img,img1,a,j){
         var ctx= canvas.getContext("2d");
         img.crossOrigin = "anonymous";
         // When the image has loaded
+        
         img.onload = function(){
+            
             // Draw it and get it's data
             canvas.width=img.width;
             canvas.height=img.height;
@@ -127,22 +110,19 @@ var Gallery = function (evt, m, options) {
         //console.log(ctx.getImageData(0,0,canvas.width,canvas.height));
         
     };
+
+
     var render2 = function () {
         var i = 0;
         for (i; i < len; i += 1) {
             li = li.cloneNode(false);
             a = a.cloneNode(false);
             canvas = canvas.cloneNode(false);
-            img = img.cloneNode(false);
-            img1 = img1.cloneNode(false);
-            changeBrightness(canvas,img,img1,a,i);
+            img2 = img1.cloneNode(false);
+            changeBrightness(canvas,img,img2,a,i);
             a.href = options.images[i].url;
             a.title = options.images[i].title;
-            img.src = options.images[i].thumb;
-            img.setAttribute('data-large-img-url', options.images[i].large);
-            img.className = 'img';
-            img.id = 'img-' + i;
-            a.appendChild(img1);
+            a.appendChild(img2);
             li.appendChild(a);
 
             frag.appendChild(li);
@@ -150,7 +130,6 @@ var Gallery = function (evt, m, options) {
 
         options.gallery.appendChild(frag);
 
-        walk(1);
     };
 
     var changeBrightness = function(canvas, img,img1,a,j){
@@ -173,9 +152,9 @@ var Gallery = function (evt, m, options) {
                 var green = dA[i + 1]; // Extract green
                 var blue = dA[i + 2]; // Extract blue
 
-                var brightenedRed = 1.25 * red;
-                var brightenedGreen = 1.25 * green;
-                var brightenedBlue = 1.25 * blue;
+                var brightenedRed = 0.5 * red;
+                var brightenedGreen =0.5 * green;
+                var brightenedBlue = 0.5 * blue;
 
                 /**
                  *
@@ -195,12 +174,12 @@ var Gallery = function (evt, m, options) {
             ctx.putImageData(imgData, 0, 0);
 
             
-            img1.src = canvas.toDataURL();
-            img1.setAttribute('data-large-img-url', img1.src);
-            img1.className = 'img1';
-            img1.id = 'img1-' + j;
+            img2.src = canvas.toDataURL();
+            img2.setAttribute('data-large-img-url', img2.src);
+            img2.className = 'img1';
+            img2.id = 'img1-' + j;
             m.attach({
-                thumb: '.img1',
+                thumb: '.img2',
                 zoomable: true
             });
             
@@ -210,18 +189,19 @@ var Gallery = function (evt, m, options) {
         //console.log(ctx.getImageData(0,0,canvas.width,canvas.height));
         
     };
+    
     this.next = function () {
-        walk(1);
+        ///walk(1);
     };
 
     this.prev = function () {
-        walk(-1);
+        //walk(-1);
     };
     this.change = function(){
         //delete m["thumb"];
         //delete m["zoomable"];
         console.log(changed);
-        for(var i=0; i<7;i++){
+        for(var i=0; i<1;i++){
             options.gallery.removeChild(options.gallery.childNodes[0]);
         }
         if(changed){
@@ -231,11 +211,19 @@ var Gallery = function (evt, m, options) {
         }
         changed = !changed;
         
+    };
+
+    this.changeBrightness = function(){
+        console.log("Request received for changing the brightness");
+        options.gallery.removeChild(options.gallery.childNodes[0]);
+        render2();
+
     }
 
     evt.attach('mousedown', options.prev, this.prev);
     evt.attach('mousedown', options.next, this.next);
     evt.attach('mousedown', options.change, this.change);
+    evt.attach('mousedown',options.changeBrightness, this.changeBrightness)
 
     render();
     

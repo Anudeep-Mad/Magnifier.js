@@ -1,0 +1,4 @@
+https://stackoverflow.com/questions/32693700/how-to-set-pixel-rgb-value-according-to-image-vertical-strip-javascript
+
+
+https://docs.opencv.org/3.4/d3/dc1/tutorial_basic_linear_transform.html
