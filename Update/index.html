@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+            "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Magnifier.js demo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="demo.css">
+<link rel="stylesheet" type="text/css" href="magnifier.css">
+
+</head>
+<body>
+<div class="wrapper">
+    <h1 class="heading">Magnifier.js</h1>
+    <div class="gallery">    
+        <div class="magnifier-preview" id="gallery-preview">
+        </div>
+    </div>
+
+    <h2 class="heading">At a glance</h2>
+
+  <div style="margin: 0; width: 400px; height: 266px auto">
+        <a class="magnifier-thumb-wrapper demo" id="href_ll">
+            <img src="image1.jpg" id="thumb" class="img" data-large-img-url="image1.jpg">
+        </a>
+        <div class="magnifier-preview example heading" id="preview" style="width: 400px; height: 266px">Night Over The Rhone<br>by Vincent van Gogh</div>
+    </div>
+
+  
+   
+
+<script type="text/javascript" src="Event.js"></script>
+<script type="text/javascript" src="Magnifier.js"></script>
+
+<script type="text/javascript">
+var evt = new Event(),
+    m = new Magnifier(evt);
+var img = new Image();
+img.src = "image1.jpg";
+m.attach({
+    thumb: '.img',
+    zoomable: true,
+    zoom: 3,
+	mode: 'inside'
+	<!--largeWrapper: 'preview' -->
+});
+
+
+function createCanvas(){
+			var image= document.getElementById("thumb");
+			//console.log(document.getElementById("thumb"));
+            // create a new canvas element
+            var myCanvas = document.createElement("canvas");
+            var myCanvasContext = myCanvas.getContext("2d");
+
+
+            var imgWidth=image.width;
+            var imgHeight=image.height;
+
+            // set the width and height to the same as the image
+            myCanvas.width= imgWidth;
+            myCanvas.height = imgHeight;
+
+            // draw the image
+            myCanvasContext.drawImage(image,0,0);
+
+            // get all the image data into an array
+            var imageData = myCanvasContext.getImageData(0,0, imgWidth, imgHeight);
+			var data=imageData.data;
+
+            // go through it all...
+            for (j=0; j<imageData.width; j++)
+            {
+                for (i=0; i<imageData.height; i++)
+                {
+                    // index: red, green, blue, alpha, red, green, blue, alpha..etc.
+                    var index=(i*4)*imageData.width+(j*4);
+                    var red=imageData.data[index];
+                    var alpha=imageData.data[index+3];
+
+                    // set the red to the same
+                    imageData.data[index]=red;
+
+                    // set the rest to black
+                    imageData.data[index+1]=0;
+                    imageData.data[index+2]=0;
+                    imageData.data[index+3]=alpha;
+                    delete c;
+                }
+            }
+			
+            // put the image data back into the canvas
+            myCanvasContext.putImageData(imageData,0,0,0,0, imageData.width,   imageData.height);
+            document.getElementById("thumb").src = myCanvas.toDataURL();
+			document.getElementById("thumb-large").src = myCanvas.toDataURL();
+			image.src = myCanvas.toDataURL();
+			image.setAttribute("data-large-img-wrapper","preview");
+			image.setAttribute("data-large-img-url",image.src);
+			image.setAttribute("class","img1");	 	
+			//console.log(document.getElementById("thumb"));
+			//document.getElementById("thumb").setAttribute("data-large-img-wrapper","preview");
+			var hr = document.getElementById("href_ll");
+			//hr.removeChild(hr.childNodes[1]);
+			console.log(hr.childNodes);
+			//hr.appendChild(image);
+			console.log(hr.childNodes);
+			console.log(hr);
+			//console.log(document.getElementById("thumb"));		
+        }
+		function brightness(){
+			document.getElementById("thumb").style.filter = "brightness(150%)";
+			document.getElementById("thumb-large").style.filter = "brightness(150%)";
+		}
+		function reducebrightness(){
+			document.getElementById("thumb").style.filter = "brightness(50%)";
+			document.getElementById("thumb-large").style.filter = "brightness(50%)";
+		}
+		function contrast(){
+			document.getElementById("thumb").style.filter = "contrast(150%)";
+			document.getElementById("thumb-large").style.filter = "contrast(150%)";
+		}
+		function reducecontrast(){
+			document.getElementById("thumb").style.filter = "contrast(50%)";
+			document.getElementById("thumb-large").style.filter = "contrast(50%)";
+		}
+		function resetB(){
+			document.getElementById("thumb").style.filter = "brightness(100%)";
+			document.getElementById("thumb-large").style.filter = "brightness(100%)";
+		}
+		function resetC(){
+			document.getElementById("thumb").style.filter = "contrast(100%)";
+			document.getElementById("thumb-large").style.filter = "contrast(100%)";
+		}
+		document.onkeyup = function(e) {
+		  if (e.which == 87) {
+			brightness();
+		  } else if (e.which==83) {
+			reducebrightness();
+		  } else if (e.which==65) {
+			contrast();
+		  } else if (e.which==68) {
+			reducecontrast();
+		  } else if (e.which==90) {
+			resetB();
+		  } else if (e.which==88) {
+			resetC();
+		  }
+		  
+		};
+		function next(){
+			document.getElementById("thumb").src = "naruto.jpg";
+			document.getElementById("thumb-large").src ="naruto.jpg";
+		}
+		function prev(){
+			document.getElementById("thumb").src = "naruto.png";
+			document.getElementById("thumb-large").src ="naruto.png";
+		}
+
+
+</script>
+
+        
+<input type=button onClick="createCanvas()"; value='Reload image'/>
+<input type=button onClick="brightness()"; value='Brighten image'/>
+<input type=button onClick="next()"; value='Next Img'/>
+<input type=button onClick="prev()"; value='Prev Img'/>
+
+</body>
+</html>
